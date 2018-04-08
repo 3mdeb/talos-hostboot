@@ -130,28 +130,15 @@ inline fapi2::ReturnCode freq_to_ps(const T i_speed_grade, OT& o_tCK_in_ps )
 template<typename T, typename OT>
 fapi2::ReturnCode ps_to_freq(const T i_time_in_ps, OT& o_speed_grade)
 {
-    switch(i_time_in_ps)
+    if(i_time_in_ps <= 750)         o_speed_grade = fapi2::ENUM_ATTR_MSS_FREQ_MT2666; // Ram is at least as fast as 2666MT/s
+    else if(i_time_in_ps <= 833)    o_speed_grade = fapi2::ENUM_ATTR_MSS_FREQ_MT2400; // Ram is at least as fast as 2400MT/s
+    else if(i_time_in_ps <= 938)    o_speed_grade = fapi2::ENUM_ATTR_MSS_FREQ_MT2133; // Ram is at least as fast as 2133MT/s
+    else if(i_time_in_ps <= 1072)   o_speed_grade = fapi2::ENUM_ATTR_MSS_FREQ_MT1866; // Ram is at least as fast as 1866MT/s
+    else
     {
-        case 750:
-            o_speed_grade = fapi2::ENUM_ATTR_MSS_FREQ_MT2666;
-            break;
-
-        case 833:
-            o_speed_grade = fapi2::ENUM_ATTR_MSS_FREQ_MT2400;
-            break;
-
-        case 937:
-            o_speed_grade = fapi2::ENUM_ATTR_MSS_FREQ_MT2133;
-            break;
-
-        case 1071:
-            o_speed_grade = fapi2::ENUM_ATTR_MSS_FREQ_MT1866;
-            break;
-
-        default:
-            FAPI_ERR("Invalid clock period (tCK) - %d - provided", i_time_in_ps);
-            return fapi2::FAPI2_RC_INVALID_PARAMETER;
-            break;
+        // Ram is too slow.
+        FAPI_ERR("Invalid clock period (tCK) - %d - provided", i_time_in_ps);
+        return fapi2::FAPI2_RC_INVALID_PARAMETER;
     }
 
     return fapi2::FAPI2_RC_SUCCESS;
