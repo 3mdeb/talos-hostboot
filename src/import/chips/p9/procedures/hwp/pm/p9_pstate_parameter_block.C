@@ -1793,11 +1793,15 @@ uint32_t PlatPmPPB::ps2v_mv(const Pstate i_pstate)
     FAPI_INF ("l_SlopeValue %x",l_SlopeValue);
 
 
-    uint32_t x = (l_SlopeValue * (-i_pstate + iv_operating_points[VPD_PT_SET_BIASED_SYSP][region_start].pstate));
+    int32_t x_candidate = (l_SlopeValue * (-i_pstate + iv_operating_points[VPD_PT_SET_BIASED_SYSP][region_start].pstate));
+    uint32_t x = 0;
     uint32_t y = x >> VID_SLOPE_FP_SHIFT_12;
 
+    if (x_candidate > 0)
+        x = x_candidate;
+
     uint32_t l_vdd =
-        (((l_SlopeValue * (-i_pstate + iv_operating_points[VPD_PT_SET_BIASED_SYSP][region_start].pstate)) >> VID_SLOPE_FP_SHIFT_12)
+        ((x >> VID_SLOPE_FP_SHIFT_12)
            + (iv_operating_points[VPD_PT_SET_BIASED_SYSP][region_start].vdd_mv));
 
     // Round up
