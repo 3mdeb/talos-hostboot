@@ -2521,6 +2521,33 @@ errlHndl_t IStepDispatcher::sendProgressCode(bool i_needsLock)
     port80_val++;
 #endif
 
+#ifdef CONFIG_ISTEP_LPC_PORT8X_DEBUG
+    // Detailed istep output for consumption by BMC on e.g. RCS Talos II systems.
+    //
+    // Due to FSI silicon issues, those platforms may fail to start correctly
+    // if the BMC is not aware of the exact ISTEP being run to control BMC
+    // service sequencing.
+    //
+    // NEVER output fake values here, only real ISTEP data.
+    // Data is latched in on write to port 82h
+    uint8_t port81_val = iv_curIStep & 0xff;
+    uint8_t port82_val = iv_curSubStep & 0xff;
+    size_t port81_len = sizeof(port81_val);
+    size_t port82_len = sizeof(port82_val);
+    // Write port 81h first
+    err = deviceWrite(TARGETING::MASTER_PROCESSOR_CHIP_TARGET_SENTINEL,
+                      &port81_val, port81_len,
+                      DEVICE_LPC_ADDRESS(LPC::TRANS_IO, 0x81));
+    delete err; // this is debug only, ignore any errors
+    err = NULL;
+    // Then write port 82h, latching in the full 16-bit value for read
+    err = deviceWrite(TARGETING::MASTER_PROCESSOR_CHIP_TARGET_SENTINEL,
+                      &port82_val, port82_len,
+                      DEVICE_LPC_ADDRESS(LPC::TRANS_IO, 0x82));
+    delete err; // this is debug only, ignore any errors
+    err = NULL;
+#endif
+
 #ifdef CONFIG_CONSOLE_OUTPUT_PROGRESS
     //--- Display step on serial console
     if ((iv_curIStep != lastIstep) || (iv_curSubStep != lastSubstep))
