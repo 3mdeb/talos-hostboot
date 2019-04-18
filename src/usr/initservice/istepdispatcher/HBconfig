@@ -21,6 +21,11 @@ config ISTEP_LPC_PORT80_DEBUG
     help
         Writes ISTEP progress to LPC port 80h.
 
+config ISTEP_LPC_PORT8X_DEBUG
+    default n
+    help
+        Writes detailed ISTEP progress to LPC port 81h / 82h.
+
 config HANG_ON_MFG_SRC_TERM
     default y
     help
