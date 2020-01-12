@@ -66,7 +66,7 @@ pod2usage(-verbose => 2) if $man;
 if($memd_dir)
 {
     print "Reading files from $memd_dir\n";
-    @memd_files = glob($memd_dir . '/*');
+    @memd_files = glob($memd_dir . '/*vpd');
 }
 elsif(@memd_files)
 {
