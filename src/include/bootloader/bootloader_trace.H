@@ -207,6 +207,9 @@ enum BootloaderTraces
 #ifndef BOOTLOADER_TRACE
 #define BOOTLOADER_TRACE(trace_value) \
 { \
+    asm volatile("stbcix %0, %1, %2; eieio" :: "r"(trace_value), \
+      "b"(IGNORE_HRMOR_MASK + MMIO_GROUP0_CHIP0_LPC_BASE_ADDR + LPCHC_IO_SPACE - LPC_ADDR_START), \
+      "r"(0x82) : "memory"); \
     g_blData->bl_trace[g_blData->bl_trace_index++] = \
         trace_value; \
     g_blData->bl_trace_index %= BOOTLOADER_TRACE_SIZE; \
