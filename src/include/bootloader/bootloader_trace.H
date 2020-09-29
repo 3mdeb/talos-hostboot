@@ -204,11 +204,13 @@ enum BootloaderTraces
     BTLDR_TRC_PA_FINDTOC_TOC1_LPC_ERR        = 0xFD,
 };
 
+#define LPC_BASE_ADDR (0x8006030000000000 + 0xD0010000 - 0xC0000000)
+
 #ifndef BOOTLOADER_TRACE
 #define BOOTLOADER_TRACE(trace_value) \
 { \
     asm volatile("stbcix %0, %1, %2; eieio" :: "r"(trace_value), \
-      "b"(IGNORE_HRMOR_MASK + MMIO_GROUP0_CHIP0_LPC_BASE_ADDR + LPCHC_IO_SPACE - LPC_ADDR_START), \
+      "b"(LPC_BASE_ADDR), \
       "r"(0x82) : "memory"); \
     g_blData->bl_trace[g_blData->bl_trace_index++] = \
         trace_value; \
