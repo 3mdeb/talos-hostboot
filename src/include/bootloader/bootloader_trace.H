@@ -5,8 +5,10 @@
 /*                                                                        */
 /* OpenPOWER HostBoot Project                                             */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2015,2019                        */
+/* Contributors Listed Below - COPYRIGHT 2015,2020                        */
 /* [+] International Business Machines Corp.                              */
+/* [+] Krystian Hebel                                                     */
+/* [+] Michał Żygowski                                                  */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -209,9 +211,9 @@ enum BootloaderTraces
 #ifndef BOOTLOADER_TRACE
 #define BOOTLOADER_TRACE(trace_value) \
 { \
-    asm volatile("stbcix %0, %1, %2; eieio" :: "r"(trace_value), \
-      "b"(LPC_BASE_ADDR), \
-      "r"(0x82) : "memory"); \
+    asm volatile("stb %0, 0(%1); eieio" :: \
+      "r"(trace_value), "b"(LPC_BASE_ADDR + 0x82) \
+      : "memory"); \
     g_blData->bl_trace[g_blData->bl_trace_index++] = \
         trace_value; \
     g_blData->bl_trace_index %= BOOTLOADER_TRACE_SIZE; \
